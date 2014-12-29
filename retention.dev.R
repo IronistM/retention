@@ -1,6 +1,3 @@
-install.packages(c('devtools', 'roxygen2', 'RSQLite', 'ipeds'), 
-		repos=c('http://cran.r-project.org', 'http://r-forge.r-project.org'))
-
 require(devtools)
 require(roxygen2)
 
@@ -15,7 +12,7 @@ document("retention")
 check_doc("retention")
 build("retention", binary=FALSE)
 build("retention", binary=TRUE)
-install("retention")
+install("retention", build_vignettes=FALSE)
 library(retention)
 ls('package:retention')
 check("retention")

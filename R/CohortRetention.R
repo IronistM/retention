@@ -31,6 +31,8 @@ cohortDetails <- function(students, graduates,
 	# fix could be to rename the columns here before having to do the merge.
 	students = students[order(students[,warehouseDateColumn], na.last=FALSE),]
 	graduates = graduates[order(graduates[,gradColumn], na.last=FALSE),]
+	#keep only the first degree
+	graduates = graduates[!duplicated(graduates[,studentIdColumn]),] 
 	
 	firstWHDate = min(students[,warehouseDateColumn], na.rm=TRUE)
 	lastWHDate = max(students[,warehouseDateColumn], na.rm=TRUE)
@@ -130,7 +132,7 @@ cohortDetails <- function(students, graduates,
 	
 	students$Month = as.factor(format(students[,warehouseDateColumn], format='%Y-%m'))
 	
-	students$Months = (retention:::mondf(students[,warehouseDateColumn], lastWHDate))
+	students$Months = diff.month(students[,warehouseDateColumn], lastWHDate)
 	
 	return(students)
 }
@@ -181,20 +183,24 @@ cohortRetention <- function(students, graduates,
 		rownames(t) = 1:nrow(t)
 		
 		if(!is.null(persistColumn)) {
-			t2 = as.data.frame(table(s$Month, s$Persisting))
-			if(!('Var1' %in% names(t2) & 'Var2' %in% names(t2))) {
-				return(NULL)
+			if(all(is.na(s$Persisting))) {
+				PersistenceRate <- NA
+			} else {
+				t2 = as.data.frame(table(s$Month, s$Persisting))
+				if(!('Var1' %in% names(t2) & 'Var2' %in% names(t2))) {
+					return(NULL)
+				}
+				t2 = cast(t2, Var1 ~ Var2, value='Freq')
+				if(!'TRUE' %in% names(t2)) {
+					t2[,'TRUE'] = 0
+				}
+				if(!'FALSE' %in% names(t2)) {
+					t2[,'FALSE'] = 0
+				}
+				totals2 = apply(t2[,2:3], 1, sum)
+				t2[,2:3] = 100 * t2[,2:3] / totals2
+				PersistenceRate = t2[,'TRUE']
 			}
-			t2 = cast(t2, Var1 ~ Var2, value='Freq')
-			if(!'TRUE' %in% names(t2)) {
-				t2[,'TRUE'] = 0
-			}
-			if(!'FALSE' %in% names(t2)) {
-				t2[,'FALSE'] = 0
-			}
-			totals2 = apply(t2[,2:3], 1, sum)
-			t2[,2:3] = 100 * t2[,2:3] / totals2
-			PersistenceRate = t2[,'TRUE']
 		}
 		
 		if('Var1' %in% names(t) & 'Var2' %in% names(t)) {
@@ -232,7 +238,7 @@ cohortRetention <- function(students, graduates,
 		}
 	}
 	
-	results$Month = retention:::mondf(as.Date(paste(results$Cohort, '-01', sep='')), 
+	results$Month = diff.month(as.Date(paste(results$Cohort, '-01', sep='')), 
 						  as.Date(cr$ComparisonCohort))
 	cr$Summary = results
 	class(cr) = "CohortRetention"

@@ -37,10 +37,18 @@ NULL
 #' 
 #' @param d1 date one. 
 #' @param d2 date two
-mondf <- function(d1, d2) { 
+#' @export diff.month
+diff.month <- function(d1, d2) { 
 	monnb <- function(d) { 
 		lt <- as.POSIXlt(as.Date(d, origin="1900-01-01"))
 		lt$year*12 + lt$mon
 	} 
 	return(abs(monnb(d2) - monnb(d1)))
+}
+
+#' Depcreated function
+#' @inheritParams diff.month
+mondf <- function(d1, d2) {
+	warning("This function is deprecated. Use diff.month instead!!!")
+	return(diff.month(d1, d2))
 }

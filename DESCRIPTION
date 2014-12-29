@@ -5,6 +5,8 @@ Version: 1.0
 Date: 2012-04-29
 Author: Jason Bryer <jason@bryer.org>
 Maintainer: Jason Bryer <jason@bryer.org>
+URL: http://jason.bryer.org/retention, http://github.com/jbryer/retention
+BugReports: https://github.com/jbryer/retention/issues
 Description: Functions to calculate and visualize retention and completion
     rates.
 License: What license is it under?
@@ -15,18 +17,3 @@ Depends:
     psych,
     reshape,
     grid
-Collate:
-    'Retention.R'
-    'plot.CohortRetention.R'
-    'plot.Persistence.R'
-    'plot.Retention.R'
-    'plot.RetentionOverall.R'
-    'retention.latex.R'
-    'retention.summary.R'
-    'retention-package.R'
-    'CohortRetention.R'
-    'align.R'
-    'summary.CohortRetention.r'
-    'summary.retention.r'
-    'xtable.CohortRetention.R'
-    'xtable.Retention.R'
